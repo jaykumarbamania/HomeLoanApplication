@@ -1,0 +1,38 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<h1>Admin Login Successfull....</h1>
+	
+	<hr>
+	<h3>User Name : <span th:text="${admin.username}"></span></h3>
+	<h3>User FirstName : <span th:text="${admin.firstname}"></span></h3>
+	<h3>User LastName : <span th:text="${admin.lastname}"></span></h3>
+	<h3>User Email  : <span th:text="${admin.email}"></span></h3>
+	<h3>User Phone  : <span th:text="${admin.phone}"></span></h3>
+	<hr>
+	<div >
+		<table border="1">
+			<tr>
+				<th>Account No</th>
+				<th>Amount</th>
+				<th>Interest Rate</th>
+				<th>Salary</th>
+				<th>Tenure</th>
+				<th>Status</th>
+				<th>Description </th>
+			</tr>
+			<tr th:each="list : ${loanAccs}" >
+			<td th:text="${list.accountNo}"></td>
+			<td th:text="${list.amount}"></td>
+			<td th:text="${list.interestRate}"></td>
+			<td th:text="${list.salary}"></td>
+			<td th:text="${list.tenure}"></td>
+			<td th:text="${list.status}"></td>
+			<td th:text="${list.description}"></td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+
+</html>
