@@ -12,7 +12,49 @@
 	<h3>User Email  : <span th:text="${user.email}"></span></h3>
 	<h3>User Phone  : <span th:text="${user.phone}"></span></h3>
 	
-	<a href="apply/loan">Apply for loan</a>
+	<a href="apply/loan">Loan</a>
+	
+	<hr>
+	<div >
+		<table border="1">
+			<tr>
+				<th>Loan Id</th>
+				<th>Amount</th>
+				<th colspan="2">Action</th>
+				<th>Approved Amt</th>
+				<th>Interest Rate</th>
+				<th>Tenure</th>
+				<th>Status</th>
+				<th>Description </th>
+				<th>Download</th>
+			</tr>
+			
+			<tr th:each="list : ${appliedLoans}" >
+				<td th:text="${list.loanAccId}"></td>
+				<td th:text="${list.amount}"></td>
+				<!-- <form method="post" action="/approveLoan"> -->
+				<td th:if="${list.status == 'Approved'}"><button type="submit" th:onclick="'window.location.href=\'/acceptLoan?id=' + ${list.loanAccId} + '\''" >Accept</button></td>
+				<td th:if="${list.status == 'Approved'}" ><button>Cancel</button>
+				</td>
+				<td th:text="${list.approvedAmt}">
+				<!-- <input type="number" name="approvedAmt" />
+				<input type="hidden" name="id" th:value="${list.accountNo+''}" /> -->
+				</td>
+				<!-- </form> -->
+				<!-- <td th:if="${loanApproved == true}" th:text="${list.approvedAmt}"></td> -->
+				<td th:text="${list.interestRate}"></td>
+				<td th:text="${list.tenure}"></td>
+				<td th:text="${list.status}"></td>
+				<td th:text="${list.description}"></td>
+				<td><a th:href="@{'/downloadfile?id=' + ${list.loanAccId}}"><i class="fa fa-download">Download</i></a></td>
+				
+				
+			</tr>
+	
+			
+		</table>
+	</div>
 </body>
 
 </html>
+<!-- th:onclick="'window.location.href=\'/rejectLoan?id=' + ${list.loanAccId} + '\''" -->

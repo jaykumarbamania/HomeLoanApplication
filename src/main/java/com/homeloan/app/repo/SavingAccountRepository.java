@@ -15,4 +15,6 @@ public interface SavingAccountRepository extends JpaRepository<SavingAccount, In
 	
 	@Query("SELECT a FROM SavingAccount a WHERE a.user.userId = :userid")
 	SavingAccount findSavingAccountByUserid(@Param("userid") Integer userid);
+	
+	SavingAccount findSavingAccountByAccountno(Long accountno);
 }

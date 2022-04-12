@@ -47,4 +47,17 @@ public class LoanAccount {
 	
 	@Column(name="status")
 	private String status;
+	
+	@Column
+	@Lob
+	private byte[] file;
+	
+	@Column
+    private String docName;
+	
+	@Column
+    private Double approvedAmt;
+	
+	@Column
+    private Double eligibleAmt;
 }

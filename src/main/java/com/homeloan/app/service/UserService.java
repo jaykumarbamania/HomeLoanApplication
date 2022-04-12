@@ -3,7 +3,9 @@ package com.homeloan.app.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.homeloan.app.model.SavingAccount;
 import com.homeloan.app.model.Users;
+import com.homeloan.app.repo.SavingAccountRepository;
 import com.homeloan.app.repo.UserRepository;
 
 @Service
@@ -11,6 +13,9 @@ public class UserService {
 	
 	@Autowired
 	private UserRepository repo;
+	
+	@Autowired
+	private SavingAccountRepository savingAccRepo;
 
 
 	public Users checkUser(String name,String password) {
@@ -31,5 +36,9 @@ public class UserService {
 	
 	public Users checkPhoneNum(Long phone) {
 		return repo.findUsersByPhone(phone);
+	}
+	
+	public SavingAccount getSavingAccount(Integer userid) {
+		return savingAccRepo.findSavingAccountByUserid(userid);
 	}
 }

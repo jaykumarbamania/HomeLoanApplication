@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="reg-form">
-  <form action="/applyLoan" method="post">
+  <form action="/applyLoan" method="post" enctype="multipart/form-data">
     <h1>Apply for Loan</h1>
     <div class="content">
       <div class="input-field">
@@ -29,10 +29,10 @@
         <textarea name="description" placeholder="Description" >
         </textarea>
       </div>
-		<!-- <div class="input-field">
-        <input type="file" id="myFile" name="filename" placeholder="Documents">
+		<div class="input-field">
+        <input type="file" id="myFile" name="docUrl" placeholder="Documents">
   
-      </div> -->
+      </div> 
 		
 		
   

@@ -41,6 +41,5 @@ public class ApplyLoan {
 	@Lob  //Large Objects
 	private String description;
 	
-	@Column(name="docUrl")
-	private String docUrl;
+
 }
