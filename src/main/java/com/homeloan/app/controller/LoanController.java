@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -132,7 +133,8 @@ public class LoanController {
 		repayment.setStatus("Ongoing");
 		repayment.setOutstanding(updateLoanAcc.getApprovedAmt());
 		repaymentService.saveRepayment(repayment);
-		emailService.sendOnApprove(savingAcc.getUser().getEmail(), "COngratulations , Your Loan is Approved");
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "COngratulations , Your Loan is Approved","Loan is Approved","loanhome349@gmail.com");
+
 //		model.addAttribute("loanApproved",true);
 		return "redirect:/admin/dashboard";
 	}
@@ -146,7 +148,8 @@ public class LoanController {
 		updateLoanAcc.setLoanAccId(id);
 		updateLoanAcc.setStatus("Closed");
 		loanAccService.saveAppliedLoan(updateLoanAcc);
-		emailService.sendOnReject("loanhome349@gmail.com", "Unfortunately , Your Loan is Not Approved");
+		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "Unfortunately , Your Loan is Not Approved","Loan is Cancelled","loanhome349@gmail.com");
 		return "redirect:/admin/dashboard";
 	}
 	
@@ -158,9 +161,133 @@ public class LoanController {
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		String username = (String) session.getAttribute("username");
 		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
+		model.addAttribute("loan_id",id);
 		model.addAttribute("repayment",repayment);
 		model.addAttribute("username",username);
 		return "viewloan";
+	}
+	
+	@RequestMapping(value = "/prepayment", method = RequestMethod.GET)
+	public String prePayment(@RequestParam("loan_id") String str_loanid, HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
+
+		Integer loan_id = Integer.parseInt(str_loanid);
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
+		String username = (String) session.getAttribute("username");
+		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
+		
+		model.addAttribute("repayment",repayment);
+		model.addAttribute("username",username);
+		model.addAttribute("loan_id",loan_id);
+		return "prepayment";
+	}
+	
+	@RequestMapping(value = "/prepayment", method = RequestMethod.POST)
+	public String checkPrePayment(@RequestParam("preEmi") Double preEmi, 
+			@RequestParam("loan_id") String str_loanid, 
+			@RequestParam("emi1") Double emi,
+			HttpSession session, Model model) {
+
+		
+		
+		Integer loan_id = Integer.parseInt(str_loanid);
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
+		String username = (String) session.getAttribute("username");
+		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
+		
+
+		model.addAttribute("username",username);
+		model.addAttribute("loan_id",loan_id);
+		
+		if(preEmi >= (emi *3) ) {
+			Double newOutStanding = repayment.getOutstanding() - preEmi;
+			System.out.println(newOutStanding);
+			repayment.setRepaymentid(repayment.getRepaymentid());
+			repayment.setOutstanding(newOutStanding);
+			
+			repaymentService.saveRepayment(repayment);
+			model.addAttribute("successMsg","Pre-Payment is Successfull ");
+			model.addAttribute("repayment",repayment);
+			
+			return "prepayment";
+		}else {
+			model.addAttribute("errorMsg","Emi should be minimum "+(emi * 3));
+			model.addAttribute("repayment",repayment);
+			return "prepayment";
+		}
+	}
+	
+	@RequestMapping(value = "/payAmount/{loan_id}/{repaymentId}/{ppe}/{pie}", method = RequestMethod.GET)
+	public String payAmount(@PathVariable("repaymentId") Integer repaymentId,
+			@PathVariable("loan_id") Integer loan_id,
+			@PathVariable("ppe") Double ppe,
+			@PathVariable("pie") Double pie,
+			HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
+
+	
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
+		String username = (String) session.getAttribute("username");
+		Repayment repayment = repaymentService.getRepaymentById(repaymentId);
+		double currNoOfEmiPaid = repayment.getNoEmiPaid();
+		double newOut = repayment.getOutstanding()-ppe;
+		double newInterst = repayment.getInterest() - pie;
+		repayment.setRepaymentid(repaymentId);
+		repayment.setOutstanding(newOut);
+		repayment.setInterest(newInterst);
+		repayment.setNoEmiPaid(currNoOfEmiPaid+1);
+		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "EMI DEDUCTED  ","EMI DEDUCTED","loanhome349@gmail.com");
+		repaymentService.saveRepayment(repayment);
+		model.addAttribute("loan_id",updateLoanAcc.getLoanAccId());
+		model.addAttribute("repayment",repayment);
+		model.addAttribute("username",username);
+		return "redirect:/viewLoan?id="+updateLoanAcc.getLoanAccId();
+	}
+	
+	@RequestMapping(value = "/foreClosure/{loan_id}/{repaymentId}/{outstanding}", method = RequestMethod.GET)
+	public String foreClosure(@PathVariable("repaymentId") Integer repaymentId,
+			@PathVariable("loan_id") Integer loan_id,
+			@PathVariable("outstanding") Double outstanding,
+			HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
+
+	
+//		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
+//		String username = (String) session.getAttribute("username");
+//		Repayment repayment = repaymentService.getRepaymentById(repaymentId);
+//		double currNoOfEmiPaid = repayment.getNoEmiPaid();
+//		repayment.setRepaymentid(repaymentId);
+//		repayment.setOutstanding(newOut);
+//		repayment.setInterest(newInterst);
+//		repayment.setNoEmiPaid(currNoOfEmiPaid+1);
+//		repaymentService.saveRepayment(repayment);
+		model.addAttribute("loan_id",loan_id);
+		model.addAttribute("outstanding",outstanding);
+		model.addAttribute("repaymentId",repaymentId);
+		return "foreclosure";
+	}
+	
+	@RequestMapping(value = "/closeForeClosing", method = RequestMethod.POST)
+	public String closeForeClosing(@RequestParam("repaymentid") Integer repaymentid,
+			@RequestParam("loan_id") Integer loan_id,
+			@RequestParam("outstanding") Double outstanding,
+			HttpSession session, Model model){
+
+	
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
+		updateLoanAcc.setLoanAccId(loan_id);
+		updateLoanAcc.setStatus("Closed");
+		loanAccService.saveAppliedLoan(updateLoanAcc);
+//		String username = (String) session.getAttribute("username");
+		Repayment repayment = repaymentService.getRepaymentById(repaymentid);
+		repayment.setOutstanding((double) 0);
+		repayment.setStatus("Closed");
+		repaymentService.saveRepayment(repayment);
+		model.addAttribute("loan_id",loan_id);
+		model.addAttribute("outstanding",outstanding);
+		model.addAttribute("repaymentId",repaymentid);
+		return "redirect:/";
 	}
 
 //	private static double calculateEligibleLoanAmt(double salary,double amount) {

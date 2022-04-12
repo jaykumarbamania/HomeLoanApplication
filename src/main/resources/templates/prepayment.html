@@ -1,0 +1,59 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	
+</head>
+<body>
+	
+	<input type="hidden" id="principal" th:value="${repayment.principle}" />
+	<input type="hidden" id="accountNo" th:value="${repayment.accountNo}" />
+	<input type="hidden" id="year" th:value="${repayment.year}" />
+<input type="hidden" id="emi" name="emi" th:value="${repayment.emi}" />
+	<input type="hidden" id="interest" th:value="${repayment.interest}" />
+	<input type="hidden" id="outstanding" th:value="${repayment.outstanding}" />
+	<input type="hidden" id="status" th:value="${repayment.status}" />
+	<input type="hidden" id="noEmiPaid" th:value="${repayment.noEmiPaid}" />
+	<input type="hidden" id="rate" th:value="${repayment.rate}" />
+	<input type="hidden" id="username" th:value="${username}" />
+	
+	
+	<form method="post" action="/prepayment">
+		<!-- <button  onclick="onIncrEmi()">+</button> -->
+		<p th:if="${errorMsg}" th:text="${errorMsg}" style="color:red"></p>
+		<p th:if="${successMsg}" th:text="${successMsg}" style="color:green"></p>
+		<input type="text" name="preEmi" id="preEmi" />
+		<input type="hidden" id="loan_id" name = "loan_id" th:value="${loan_id}" />
+		<input type="hidden" id="emi1" name="emi1"  />
+		<p>Your Emi should be minimum <span id="emiAmt"></span></p>
+		 <button type="submit"> Submit</button>
+		<!-- <button onclick="onDcrEmi()">-</button>	 -->
+	</form>
+	<script>
+	var username = document.getElementById("username").value;
+	var principal = document.getElementById("principal").value;
+	var accountNo = document.getElementById("accountNo").value;
+	var year = document.getElementById("year").value;
+	var emi = document.getElementById("emi").value;
+	var rate = document.getElementById("rate").value;
+	var interest = document.getElementById("interest").value;
+	var status = document.getElementById("status").value;
+	var noEmiPaid = document.getElementById("noEmiPaid").value;
+	document.getElementById("emi1").value  = emi+"" ;
+	document.getElementById("emiAmt").innerHTML  = emi *3;
+	document.getElementById("preEmi").value  = emi *3;
+		function onIncrEmi(){
+			document.getElementById("preEmi").value += emi
+		}
+		
+		function onDcrEmi(){
+			var preEmi = document.getElementById("preEmi").value 
+			
+			if(preEmi > (emi  * 3)){
+				preEmi -= emi
+			}
+		}
+	</script>
+	
+</body>
+
+</html>

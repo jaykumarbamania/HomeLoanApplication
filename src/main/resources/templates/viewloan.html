@@ -2,6 +2,7 @@
 
 
 <body>
+	<input type="hidden" id="repaymentid" th:value="${repayment.repaymentid}" />
 	<input type="hidden" id="principal" th:value="${repayment.principle}" />
 	<input type="hidden" id="accountNo" th:value="${repayment.accountNo}" />
 	<input type="hidden" id="year" th:value="${repayment.year}" />
@@ -12,8 +13,15 @@
 	<input type="hidden" id="noEmiPaid" th:value="${repayment.noEmiPaid}" />
 	<input type="hidden" id="rate" th:value="${repayment.rate}" />
 	<input type="hidden" id="username" th:value="${username}" />
+	<input type="hidden" id="loan_id" th:value="${loan_id}" />
 	<button type="button" onclick="tableToCSV()">
             download CSV
+        </button>
+        <button type="button" th:onclick="'window.location.href=\'/prepayment?loan_id=' + ${loan_id} + '\''">
+            Prepayment
+        </button>
+         <button type="button" th:onclick="onforeClosure()">
+            Fore-Closure
         </button>
 	<table border="1" id="myTable">
 			<tr>
@@ -24,6 +32,7 @@
 				<th>Interest from EMI</th>
 				<th>MONTH</th>
 				<th>Payment Status</th>
+				<th>Pay</th>
 			</tr>
 
 			<tbody id="tbody">
@@ -37,12 +46,15 @@
 	var username = document.getElementById("username").value;
 	var principal = document.getElementById("principal").value;
 	var accountNo = document.getElementById("accountNo").value;
+	var outstanding = document.getElementById("outstanding").value;
 	var year = document.getElementById("year").value;
 	var emi = document.getElementById("emi").value;
 	var rate = document.getElementById("rate").value;
-	var interest = document.getElementById("interest").value;
+	var interest = (year * 12 * emi) - principal;
 	var status = document.getElementById("status").value;
 	var noEmiPaid = document.getElementById("noEmiPaid").value;
+	
+	
 	var interest_emi = ((principal)*(rate/100))/12;
 	  var principal_emi = emi - interest_emi 
 	  status = noEmiPaid ==0 ?  'Pending': 'Paid'
@@ -54,6 +66,7 @@
     document.write("NOEMiPAid "+noEmiPaid);
     document.write(principal_emi)
 	document.write("Interst EMI "+interest_emi); */
+	
 	  var table = document.getElementById("myTable");
 	  var row = table.insertRow();
 	  var cell1 = row.insertCell(0);
@@ -63,17 +76,38 @@
 	  var cell5 = row.insertCell(4);
 	  var cell6 = row.insertCell(5);
 	  var cell7 = row.insertCell(6);
+	  var cell8 = row.insertCell(7);
 	  cell1.innerHTML = principal;
 	  cell2.innerHTML = interest;
 	  cell3.innerHTML = emi;
 	  cell4.innerHTML = principal_emi;
+	  cell4.id = "principal_emi1"
+	  cell5.id = "interest_emi1"
 	  cell5.innerHTML = interest_emi;
 	  cell6.innerHTML = "1";
 	  cell7.innerHTML = status ;
-	  
+	  var btn = document.createElement('input');
+	  btn.type = "button";
+	  btn.id = "1"
+	  btn.value = "Pay"
+		  if(status == 'Paid'){
+				 btn.disabled = true
+			 }else{
+				 btn.disabled = false
+			 } 
+	  btn.onclick=() => {
+		  payAmount(1);
+	  }
+	  cell8.appendChild(btn);
 	  principal = principal - principal_emi;
 	  interest = interest - interest_emi;
-	  for(var i = 2; i<= year*12; i++){
+	  
+/* 	  var i =1;
+	  setInterval(() => {
+		  getMonthlyEmi();
+	  }, 3000) */
+	  var  j = 2;
+	  for(var i = 2; i<= year*12; i++){ 
 		  interest_emi = ((principal)*(rate/100))/12;
 		  principal_emi = emi - interest_emi 
 		  status = noEmiPaid <i ?  'Pending': 'Paid'
@@ -85,18 +119,57 @@
 		  var cell5 = row.insertCell(4);
 		  var cell6 = row.insertCell(5);
 		  var cell7 = row.insertCell(6);
+		  var cell8 = row.insertCell(7);
 		  cell1.innerHTML = principal;
 		  cell2.innerHTML = interest;
 		  cell3.innerHTML = emi;
 		  cell4.innerHTML = principal_emi;
+		  cell4.id = "principal_emi"+i
+		  cell5.id = "interest_emi"+i
 		  cell5.innerHTML = interest_emi;
 		  cell6.innerHTML = i;
 		  cell7.innerHTML = status ;
+		  var btn = document.createElement('input');
+		  btn.type = "button";
+		  btn.id = i
 		  
+		  btn.value = "Pay"+i
+/* 		  btn.disabled = status == "Paid" ? "true" : "false" */
+		
+		 if(status == 'Paid'){
+			 btn.disabled = true
+		 }else{
+			 btn.disabled = false
+		 }
+		  btn.onclick=() => {
+			  payAmount(j++);
+		  }
+		  
+		  cell8.appendChild(btn);
 		  principal = principal - principal_emi;
 		  interest = interest - interest_emi;
-		  
+	  
 	  }
+	  
+	  function payAmount(i){
+		  var loan_id = document.getElementById("loan_id").value;
+		  var repaymentid = document.getElementById("repaymentid").value;
+		  var ppe =  document.getElementById('principal_emi'+i).innerHTML
+		  var pie =  document.getElementById('interest_emi'+i).innerHTML
+		 console.log(loan_id+" "+repaymentid+" "+ppe+" "+pie);
+		 /*  window.location.href="/payAmount/?id="+repaymentId+"&?ppe="+prePrincipal+"&?pie="+preInterestEmi */
+		  window.location.href="/payAmount/"+loan_id+"/"+repaymentid+"/"+ppe+"/"+pie
+		
+	  }
+	
+	  function onforeClosure(){
+		  var loan_id = document.getElementById("loan_id").value;
+		  var repaymentid = document.getElementById("repaymentid").value;
+		  var outstanding = document.getElementById("outstanding").value;
+		  window.location.href="/foreClosure/"+loan_id+"/"+repaymentid+"/"+outstanding
+	  }
+
+
 
 		
 	  function tableToCSV() {

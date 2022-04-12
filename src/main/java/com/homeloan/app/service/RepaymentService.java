@@ -13,11 +13,15 @@ public class RepaymentService {
 	private RepaymentRepository repaymentRepo;
 	
 	public Repayment saveRepayment(Repayment repayment) {
-		return repaymentRepo.save(repayment);
+		return repaymentRepo.saveAndFlush(repayment);
 	}
 	
 	public Repayment getRepaymentByAccountNo(Long accountNo) {
 		return repaymentRepo.findRepaymentByAccountNo(accountNo);
+	}
+	
+	public Repayment getRepaymentById(Integer repaymentId) {
+		return repaymentRepo.getById(repaymentId);
 	}
 
 }

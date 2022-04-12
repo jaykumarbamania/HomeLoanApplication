@@ -28,14 +28,14 @@ public class EmailService implements EmailSender {
 
     @Override
     @Async
-    public void sendOnApprove(String to, String email) throws MessagingException, UnsupportedEncodingException {
+    public void sendEmail(String to, String email,String subject, String from) throws MessagingException, UnsupportedEncodingException {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
-            helper.setSubject("You Loan is approved");
-            helper.setFrom("homeloanapp@gmail.com");
+            helper.setSubject(subject);
+            helper.setFrom(from);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             LOGGER.error("Failed to send email", e);
@@ -43,19 +43,6 @@ public class EmailService implements EmailSender {
         }
     }
 
-    public void sendOnReject(String to, String email) throws MessagingException, UnsupportedEncodingException {
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            helper.setText(email, true);
-            helper.setTo(to);
-            helper.setSubject("Your Loan is Rejected ");
-            helper.setFrom("homeloanapp@gmail.com");
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            LOGGER.error("Failed to send email", e);
-            throw new IllegalStateException("Failed to send email");
-        }
-    }
+    
 
 }

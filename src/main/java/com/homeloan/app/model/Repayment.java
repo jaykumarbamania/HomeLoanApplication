@@ -7,8 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.Data;
 
+@Transactional(readOnly = true)
 @Data
 @Entity
 @Table(name = "repayment")
