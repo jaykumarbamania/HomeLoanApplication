@@ -49,9 +49,9 @@ public class AdminController {
 		Users currUser = userService.findByUsername(username);
 		SavingAccount account = userService.getSavingAccount(currUser.getUserId());
 //		List<LoanAccount> obj = loanAccService.getDetailsOfSpecifiedAccountNo(account.getAccountno());
-		Optional<LoanAccount> obj = loanAccService.getLoanDetails(id);
+		LoanAccount obj = loanAccService.getLoanDetails(id).get(0);
 		if (obj != null) {
-			LoanAccount loanObj = obj.get();
+			LoanAccount loanObj = obj;
 			response.setContentType("application/octet-stream");
 			String headerKey = "Content-Disposition";
 			String headerValue = "attachment; filename = " + loanObj.getDocName();

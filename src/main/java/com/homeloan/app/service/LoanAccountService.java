@@ -29,9 +29,9 @@ public class LoanAccountService {
 		return repo.save(obj);
 	}
 	
-	public Optional<LoanAccount> getLoanDetails(Integer id) {
+	public List<LoanAccount> getLoanDetails(Integer id) {
 
-		return repo.findById(id);
+		return repo.findByLoanAccId(id);
 	}
 	
 	public List<LoanAccount> getListOfLoanApplied(){

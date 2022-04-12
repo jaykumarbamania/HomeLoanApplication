@@ -12,9 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.homeloan.app.model.LoanAccount;
+import com.homeloan.app.model.Repayment;
 import com.homeloan.app.model.SavingAccount;
 import com.homeloan.app.model.Users;
 import com.homeloan.app.service.LoanAccountService;
+import com.homeloan.app.service.RepaymentService;
 import com.homeloan.app.service.SavingAccountService;
 import com.homeloan.app.service.UserService;
 
@@ -30,6 +32,9 @@ public class HomeController {
 	@Autowired
 	private LoanAccountService loanAccService;
 	
+	@Autowired
+	private RepaymentService repaymentService;
+	
 	@GetMapping("/")
 	public String homePage(Model model,HttpSession session) {
 		String username = (String) session.getAttribute("username");
@@ -44,7 +49,22 @@ public class HomeController {
 		if(!listAcc.isEmpty()) {
 			model.addAttribute("appliedLoans",listAcc);
 		}
+		
+		List<LoanAccount> updateLoanAccList = loanAccService.getDetailsOfSpecifiedAccountNo(userAcc.getAccountno());
+		LoanAccount updateLoanAcc;
+		if(!updateLoanAccList.isEmpty()){
+			updateLoanAcc = updateLoanAccList.get(0);
+			if(updateLoanAcc.getStatus().equals("Ongoing")) {
+				Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
 				
+//				model.addAttribute("principal",repayment.getPrinciple());
+				model.addAttribute("repayment",repayment);
+				model.addAttribute("viewColumn" , "true");
+					
+			}
+		}
+		
+		
 		model.addAttribute("user",currentUser);
 		model.addAttribute("account",userAcc);
 		

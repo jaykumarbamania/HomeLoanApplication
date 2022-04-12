@@ -15,5 +15,9 @@ public class RepaymentService {
 	public Repayment saveRepayment(Repayment repayment) {
 		return repaymentRepo.save(repayment);
 	}
+	
+	public Repayment getRepaymentByAccountNo(Long accountNo) {
+		return repaymentRepo.findRepaymentByAccountNo(accountNo);
+	}
 
 }

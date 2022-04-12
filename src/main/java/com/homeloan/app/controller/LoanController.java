@@ -34,38 +34,34 @@ import com.homeloan.app.service.SavingAccountService;
 import com.homeloan.app.service.StorageService;
 import com.homeloan.app.service.UserService;
 
-
 @Controller
 //@MultipartConfig(maxFileSize = 10737418240L, maxRequestSize = 10737418240L, fileSizeThreshold = 52428800)
 public class LoanController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private SavingAccountService savingAccountService;
-	
+
 	@Autowired
 	private LoanAccountService loanAccService;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private RepaymentService repaymentService;
 
-	
 	@GetMapping("/apply/loan")
-	public String getAdminDashoard(Model model,HttpSession session)
-	{
-		
+	public String getAdminDashoard(Model model, HttpSession session) {
+
 		return "loan";
 	}
-	
-	@RequestMapping(value = "/applyLoan", method = RequestMethod.POST,
-			consumes = "multipart/form-data" ,
-	        produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-	public String applyForLoan(LoanAccount loanAcc,HttpSession session,@RequestParam("docUrl") MultipartFile file) {
+
+	@RequestMapping(value = "/applyLoan", method = RequestMethod.POST, consumes = "multipart/form-data", produces = {
+			MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public String applyForLoan(LoanAccount loanAcc, HttpSession session, @RequestParam("docUrl") MultipartFile file) {
 		String username = (String) session.getAttribute("username");
 		Users currUser = userService.findByUsername(username);
 		SavingAccount userAccount = savingAccountService.findAccountByUserId(currUser.getUserId());
@@ -81,44 +77,57 @@ public class LoanController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		loanAccService.saveAppliedLoan(loanAcc);
-		
+
 		return "redirect:/";
 	}
-	
+
 	@RequestMapping(value = "/acceptLoan", method = RequestMethod.GET)
-	public String acceptLoan(@Param("id") Integer id,HttpSession session) {
-		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get();
+	public String acceptLoan(@Param("id") Integer id, HttpSession session, Model model) {
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		updateLoanAcc.setStatus("Ongoing");
-		
-//		loanAccService.saveAppliedLoan(loanAcc);
-		
+		updateLoanAcc.setLoanAccId(id);
+		loanAccService.saveAppliedLoan(updateLoanAcc);
+		model.addAttribute("accepted", "true");
+//		if( session.getAttribute("accepted") == "true" ) {
+//			System.out.println(model.getAttribute("accepted"));
+			Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
+	
+//			model.addAttribute("principal",repayment.getPrinciple());
+			model.addAttribute("repayment",repayment);
+			model.addAttribute("viewColumn" , "true");
+			
+//		}
+
 		return "redirect:/";
 	}
-	
+
 	@RequestMapping(value = "/approveLoan", method = RequestMethod.GET)
 	public String approveLoan(
 //			@RequestParam("approvedAmt") Double approvedAmt , 
-			@RequestParam("id") String str_id,HttpSession session,Model model) throws UnsupportedEncodingException, MessagingException {
+			@RequestParam("id") String str_id, HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
 
 		Integer id = Integer.parseInt(str_id);
 		Repayment repayment = new Repayment();
-		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get();
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
-		
+
 		updateLoanAcc.setLoanAccId(id);
 		updateLoanAcc.setStatus("Approved");
 //		double approvedAmt = calculateEligibleLoanAmt(updateLoanAcc.getSalary(), updateLoanAcc.getAmount());
 		updateLoanAcc.setApprovedAmt(updateLoanAcc.getAmount());
 		loanAccService.saveAppliedLoan(updateLoanAcc);
-		
+
 		repayment.setAccountNo(savingAcc.getAccountno());
 		repayment.setPrinciple(updateLoanAcc.getApprovedAmt());
 		repayment.setYear(updateLoanAcc.getTenure());
 		repayment.setNoEmiPaid((double) 0);
-		double emi = calculateEmi(updateLoanAcc.getApprovedAmt(), updateLoanAcc.getInterestRate(), updateLoanAcc.getTenure());
+		double emi = calculateEmi(updateLoanAcc.getApprovedAmt(), updateLoanAcc.getInterestRate(),
+				updateLoanAcc.getTenure());
 		repayment.setEmi(emi);
+		repayment.setRate(updateLoanAcc.getInterestRate());
 		repayment.setInterest(calculateInterest(updateLoanAcc.getApprovedAmt(), emi, updateLoanAcc.getTenure()));
 		repayment.setStatus("Ongoing");
 		repayment.setOutstanding(updateLoanAcc.getApprovedAmt());
@@ -127,13 +136,13 @@ public class LoanController {
 //		model.addAttribute("loanApproved",true);
 		return "redirect:/admin/dashboard";
 	}
-	
+
 	@RequestMapping(value = "/rejectLoan", method = RequestMethod.GET)
-	public String rejectLoan(
-			@RequestParam("id") String str_id,HttpSession session,Model model) throws UnsupportedEncodingException, MessagingException {
+	public String rejectLoan(@RequestParam("id") String str_id, HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
 
 		Integer id = Integer.parseInt(str_id);
-		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get();
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		updateLoanAcc.setLoanAccId(id);
 		updateLoanAcc.setStatus("Closed");
 		loanAccService.saveAppliedLoan(updateLoanAcc);
@@ -141,30 +150,43 @@ public class LoanController {
 		return "redirect:/admin/dashboard";
 	}
 	
+	@RequestMapping(value = "/viewLoan", method = RequestMethod.GET)
+	public String viewLoan(@RequestParam("id") String str_id, HttpSession session, Model model)
+			throws UnsupportedEncodingException, MessagingException {
+
+		Integer id = Integer.parseInt(str_id);
+		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
+		String username = (String) session.getAttribute("username");
+		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
+		model.addAttribute("repayment",repayment);
+		model.addAttribute("username",username);
+		return "viewloan";
+	}
+
 //	private static double calculateEligibleLoanAmt(double salary,double amount) {
 //		double approvedAmt = amount - salary * 50;
 //		if(approvedAmt < 0 ) approvedAmt = approvedAmt*(-1);
 //		return approvedAmt;
 //	}
-	
+
 	private static double calculateEligibleLoanAmt(double salary) {
 		return salary * 50;
 	}
-	
-	private static double calculateEmi(double principle, double interestRate,int years) {
+
+	private static double calculateEmi(double principle, double interestRate, int years) {
 		int months = years * 12;
-		interestRate=interestRate/(12*100); 
-		double emi =( principle* interestRate * Math.pow((1+interestRate), months))/(Math.pow((1+interestRate), months) -1 );
-		
+		interestRate = interestRate / (12 * 100);
+		double emi = (principle * interestRate * Math.pow((1 + interestRate), months))
+				/ (Math.pow((1 + interestRate), months) - 1);
+
 		return emi;
 	}
-	
-	private static double calculateInterest(double principal, double emi,int years) {
-		
-		double simple_interest = (years * 12 * emi) -principal;
-		
+
+	private static double calculateInterest(double principal, double emi, int years) {
+
+		double simple_interest = (years * 12 * emi) - principal;
+
 		return simple_interest;
 	}
-	
-	
+
 }

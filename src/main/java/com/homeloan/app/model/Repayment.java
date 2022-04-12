@@ -33,6 +33,9 @@ public class Repayment {
 	
 	@Column(name="interest")
 	private Double interest;
+
+	@Column(name="rate")
+	private Double rate;
 	
 	@Column(name="outstanding")
 	private Double outstanding;

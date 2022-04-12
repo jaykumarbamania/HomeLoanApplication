@@ -1,0 +1,168 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<body>
+	<input type="hidden" id="principal" th:value="${repayment.principle}" />
+	<input type="hidden" id="accountNo" th:value="${repayment.accountNo}" />
+	<input type="hidden" id="year" th:value="${repayment.year}" />
+	<input type="hidden" id="emi" th:value="${repayment.emi}" />
+	<input type="hidden" id="interest" th:value="${repayment.interest}" />
+	<input type="hidden" id="outstanding" th:value="${repayment.outstanding}" />
+	<input type="hidden" id="status" th:value="${repayment.status}" />
+	<input type="hidden" id="noEmiPaid" th:value="${repayment.noEmiPaid}" />
+	<input type="hidden" id="rate" th:value="${repayment.rate}" />
+	<input type="hidden" id="username" th:value="${username}" />
+	<button type="button" onclick="tableToCSV()">
+            download CSV
+        </button>
+	<table border="1" id="myTable">
+			<tr>
+				<th>Outstanding Principal Amt</th>
+				<th>OutStanding Interest Amt</th>
+				<th>EMI</th>
+				<th>Principal from EMI</th>
+				<th>Interest from EMI</th>
+				<th>MONTH</th>
+				<th>Payment Status</th>
+			</tr>
+
+			<tbody id="tbody">
+				
+			</tbody>
+			
+		</table>
+		
+	
+<script th:inline="javascript">
+	var username = document.getElementById("username").value;
+	var principal = document.getElementById("principal").value;
+	var accountNo = document.getElementById("accountNo").value;
+	var year = document.getElementById("year").value;
+	var emi = document.getElementById("emi").value;
+	var rate = document.getElementById("rate").value;
+	var interest = document.getElementById("interest").value;
+	var status = document.getElementById("status").value;
+	var noEmiPaid = document.getElementById("noEmiPaid").value;
+	var interest_emi = ((principal)*(rate/100))/12;
+	  var principal_emi = emi - interest_emi 
+	  status = noEmiPaid ==0 ?  'Pending': 'Paid'
+/*    document.write("Principal "+principal);
+    document.write("Account No "+accountNo);
+    document.write("Year "+year);
+    document.write("Interst "+interest);
+    document.write("Status "+status);
+    document.write("NOEMiPAid "+noEmiPaid);
+    document.write(principal_emi)
+	document.write("Interst EMI "+interest_emi); */
+	  var table = document.getElementById("myTable");
+	  var row = table.insertRow();
+	  var cell1 = row.insertCell(0);
+	  var cell2 = row.insertCell(1);
+	  var cell3 = row.insertCell(2);
+	  var cell4 = row.insertCell(3);
+	  var cell5 = row.insertCell(4);
+	  var cell6 = row.insertCell(5);
+	  var cell7 = row.insertCell(6);
+	  cell1.innerHTML = principal;
+	  cell2.innerHTML = interest;
+	  cell3.innerHTML = emi;
+	  cell4.innerHTML = principal_emi;
+	  cell5.innerHTML = interest_emi;
+	  cell6.innerHTML = "1";
+	  cell7.innerHTML = status ;
+	  
+	  principal = principal - principal_emi;
+	  interest = interest - interest_emi;
+	  for(var i = 2; i<= year*12; i++){
+		  interest_emi = ((principal)*(rate/100))/12;
+		  principal_emi = emi - interest_emi 
+		  status = noEmiPaid <i ?  'Pending': 'Paid'
+		  var row = table.insertRow();
+		  var cell1 = row.insertCell(0);
+		  var cell2 = row.insertCell(1);
+		  var cell3 = row.insertCell(2);
+		  var cell4 = row.insertCell(3);
+		  var cell5 = row.insertCell(4);
+		  var cell6 = row.insertCell(5);
+		  var cell7 = row.insertCell(6);
+		  cell1.innerHTML = principal;
+		  cell2.innerHTML = interest;
+		  cell3.innerHTML = emi;
+		  cell4.innerHTML = principal_emi;
+		  cell5.innerHTML = interest_emi;
+		  cell6.innerHTML = i;
+		  cell7.innerHTML = status ;
+		  
+		  principal = principal - principal_emi;
+		  interest = interest - interest_emi;
+		  
+	  }
+
+		
+	  function tableToCSV() {
+		  
+          // Variable to store the final csv data
+          var csv_data = [];
+
+          // Get each row data
+          var rows = document.getElementsByTagName('tr');
+          for (var i = 0; i < rows.length; i++) {
+
+              // Get each column data
+              var cols = rows[i].querySelectorAll('td,th');
+
+              // Stores each csv row data
+              var csvrow = [];
+              for (var j = 0; j < cols.length; j++) {
+
+                  // Get the text data of each cell
+                  // of a row and push it to csvrow
+                  csvrow.push(cols[j].innerHTML);
+              }
+
+              // Combine each column value with comma
+              csv_data.push(csvrow.join(","));
+          }
+
+          // Combine each row data with new line character
+          csv_data = csv_data.join('\n');
+
+          // Call this function to download csv file 
+          downloadCSVFile(csv_data);
+
+      }
+
+      function downloadCSVFile(csv_data) {
+
+          // Create CSV file object and feed
+          // our csv_data into it
+          CSVFile = new Blob([csv_data], {
+              type: "text/csv"
+          });
+
+          // Create to temporary link to initiate
+          // download process
+          var temp_link = document.createElement('a');
+
+          // Download csv file
+          temp_link.download = username+"-report.csv";
+          var url = window.URL.createObjectURL(CSVFile);
+          temp_link.href = url;
+
+          // This link should not be displayed
+          temp_link.style.display = "none";
+          document.body.appendChild(temp_link);
+
+          // Automatically click the link to
+          // trigger download
+          temp_link.click();
+          document.body.removeChild(temp_link);
+      }
+
+
+	
+
+	</script>
+</body>
+
+</html>

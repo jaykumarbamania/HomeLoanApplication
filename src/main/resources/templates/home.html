@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<body>
+<body onload="loadData()">
 	<h1>User Login Successfull....</h1>
 	<h3>User Account : <span th:text="${account.accountno}"></span></h3>
 	<h3>Balance : <span th:text="${account.balance}"></span></h3>
@@ -27,14 +27,16 @@
 				<th>Status</th>
 				<th>Description </th>
 				<th>Download</th>
+				<th th:if="${viewColumn}">loan</th>
+				
 			</tr>
 			
 			<tr th:each="list : ${appliedLoans}" >
 				<td th:text="${list.loanAccId}"></td>
 				<td th:text="${list.amount}"></td>
 				<!-- <form method="post" action="/approveLoan"> -->
-				<td th:if="${list.status == 'Approved'}"><button type="submit" th:onclick="'window.location.href=\'/acceptLoan?id=' + ${list.loanAccId} + '\''" >Accept</button></td>
-				<td th:if="${list.status == 'Approved'}" ><button>Cancel</button>
+				<td ><button type="submit"  th:if="${list.status == 'Approved'}"th:onclick="'window.location.href=\'/acceptLoan?id=' + ${list.loanAccId} + '\''" >Accept</button></td>
+				<td  ><button th:if="${list.status == 'Approved'}">Cancel</button>
 				</td>
 				<td th:text="${list.approvedAmt}">
 				<!-- <input type="number" name="approvedAmt" />
@@ -47,13 +49,28 @@
 				<td th:text="${list.status}"></td>
 				<td th:text="${list.description}"></td>
 				<td><a th:href="@{'/downloadfile?id=' + ${list.loanAccId}}"><i class="fa fa-download">Download</i></a></td>
-				
+				<th th:if="${viewColumn == 'true'}" ><button th:onclick="'window.location.href=\'/viewLoan?id=' + ${list.loanAccId} + '\''">View Loan</button></th>
 				
 			</tr>
 	
 			
 		</table>
+
+		
+		
+		
 	</div>
+	<script th:inline="javascript">
+	var name = document.getElementById("principal").value;
+	   
+    console.log(name);
+    
+	function loadData(){
+		
+	
+	}
+
+	</script>
 </body>
 
 </html>
