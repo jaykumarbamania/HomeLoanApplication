@@ -1,21 +1,62 @@
 <html xmlns:th="http://www.thymeleaf.org">
-
+<head>
+	<link rel="stylesheet" href="./home.css">
+	</head>
 <body onload="loadData()">
+	<nav>
+        <label class="logo">BARCLAYS</label>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="apply/loan">Loan</a></li>
+            <li><a href="logout">LOGOUT</a></li>
+			
+
+
+        </ul>
+
+    </nav>
+    <body style="background-color:aliceblue;">
 	<h1>User Login Successfull....</h1>
-	<h3>User Account : <span th:text="${account.accountno}"></span></h3>
+	<div class="row">
+  <div class="column">
+    <div class="card1">
+ 
+
+		<h3>User Account : <span th:text="${account.accountno}"></span></h3>
 	<h3>Balance : <span th:text="${account.balance}"></span></h3>
 	<h3>Created At : <span th:text="${account.createdat}"></span></h3>
-	<hr>
+	  </div>  
+	  
+		  <div class="card2">
+	
 	<h3>User Name : <span th:text="${user.username}"></span></h3>
 	<h3>User FirstName : <span th:text="${user.firstname}"></span></h3>
 	<h3>User LastName : <span th:text="${user.lastname}"></span></h3>
 	<h3>User Email  : <span th:text="${user.email}"></span></h3>
 	<h3>User Phone  : <span th:text="${user.phone}"></span></h3>
+		  </div> </div> </div>
 	
-	<a href="apply/loan">Loan</a>
 	
 	<hr>
 	<div >
+		<style>
+table, td, th {  
+  border: 1px solid #ddd;
+  text-align: left;
+	margin-top: 50px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 15px;
+}
+</style>
+		
+		
 		<table border="1">
 			<tr>
 				<th>Loan Id</th>
@@ -55,9 +96,6 @@
 	
 			
 		</table>
-
-		
-		
 		
 	</div>
 	<script th:inline="javascript">

@@ -1,16 +1,54 @@
-<html xmlns:th="http://www.thymeleaf.org">
 
-<body>
-	<h1>Admin Login Successfull....</h1>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+
+    <meta charset="UTF-8">
+    <title>Admin Panel - HomeLoanApp</title>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Rubik:400,700'>
+    <link rel="stylesheet" href="./admin.css">
+  
 	
-	<hr>
-	<h3>User Name : <span th:text="${admin.username}"></span></h3>
-	<h3>User FirstName : <span th:text="${admin.firstname}"></span></h3>
-	<h3>User LastName : <span th:text="${admin.lastname}"></span></h3>
-	<h3>User Email  : <span th:text="${admin.email}"></span></h3>
-	<h3>User Phone  : <span th:text="${admin.phone}"></span></h3>
-	<hr>
+			<style>
+table, td, th {  
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 15px;
+}
+</style>
+</head>
+
+    <body style="background-color:aliceblue;">
+    	<nav class="nav">
+        <label class="logo">BARCLAYS</label>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="#">Apply For Loan </a></li>
+            <li><a href="/logout">LOGOUT</a></li>
+
+
+        </ul>
+
+    </nav>
+	<h1 style="font-family:courier;font-size:190%;">Admin Login Successfull....</h1>
+
+	
+	<h3 style="color:blue;font-size:130%;visibility: hidden;">User Name : <span th:text="${admin.username}"></span></h3>
+	<h3 style="color:blue;font-size:130%;visibility: hidden;">User FirstName : <span th:text="${admin.firstname}"></span></h3>
+	<h3 style="color:blue;font-size:130%;visibility: hidden;">User LastName : <span th:text="${admin.lastname}"></span></h3>
+	<h3 style="color:blue;font-size:130%;visibility: hidden;">User Email  : <span th:text="${admin.email}"></span></h3>
+	<h3 style="color:blue;font-size:130%;visibility: hidden;">User Phone  : <span th:text="${admin.phone}"></span></h3>
+
 	<div >
+
 		<table border="1">
 			<tr>
 				<th>Account No</th>

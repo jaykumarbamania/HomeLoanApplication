@@ -1,24 +1,60 @@
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+	
 
+	<link rel="stylesheet" href="foreclosure.css">
+</head>
 <body>
+	<nav>
+        <label class="logo">BARCLAYS</label>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Apply For Loan </a></li>
+            <li><a href="#">LOGOUT</a></li>
+
+
+        </ul>
+
+    </nav>
+    <div class="container">
+   
+    <div class="content">
+      <form method="post" action="/closeForeClosing">
+        <div class="user-details">
+          <div class="input-box">
+            <span class="details"></span>
+           <input name="outstanding"  id="outstanding" type="text"  th:value="${outstanding}"  />
+          </div>
+          <div class="input-box">
+            <span class="details"></span>
+            <input name="loan_id"  id="loan_id" type="text"  th:value="${loan_id}"  />
+          </div>
+          <div class="input-box">
+            <span class="details"></span>
+            <input name="repaymentid"  id="repaymentid" type="text"  th:value="${repaymentId}"  />
+          </div>
+          
+        </div>
+   </div>
+        <div class="button">
+          <input type="submit" value="Submit">
+        </div>
+      </form>
+    </div>
+  </div>
+  <style> 
+input[type=button], input[type=submit] {
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  border: none;
+  color: #fff;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
 	
-	<form method="post" action="/closeForeClosing">
-		<input name="outstanding"  id="outstanding" type="text"  th:value="${outstanding}"  />
-		<input name="loan_id"  id="loan_id" type="text"  th:value="${loan_id}"  />
-		<input name="repaymentid"  id="repaymentid" type="text"  th:value="${repaymentId}"  />
-		
-		<button type="submit" >Submit</button>
-	</form>
 	
-	<script>
-		function closeForeClosure(){
-			var loan_id = document.getElementById("loan_id").value;
-			
-			  var repaymentid = document.getElementById("repaymentid").value;
-			  var outstanding = document.getElementById("outstanding").value;
-			  alert(loan_id+" "+repaymentid+" "+outstanding)
-			  window.location.href="../closeForeClosing/"+loan_id+"/"+repaymentid+"/"+outstanding
-		}
-	</script>
+	
 </body>
 </html>

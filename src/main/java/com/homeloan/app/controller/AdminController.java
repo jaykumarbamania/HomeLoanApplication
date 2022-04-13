@@ -31,14 +31,14 @@ public class AdminController {
 
 	@GetMapping("/admin/dashboard")
 	public String getAdminDashoard(Model model, HttpSession session) {
-		String username = (String) session.getAttribute("username");
-		if(username == null || username.equals("")) {
+		String admin = (String) session.getAttribute("admin");
+		if(admin == null || admin.equals("")) {
 			return "redirect:/login";
 		}
-		Users admin = userService.findByUsername(username);
+		Users adminUser = userService.findByUsername(admin);
 		List<LoanAccount> loanAccs = loanAccService.getListOfLoanApplied();
 		model.addAttribute("loanAccs", loanAccs);
-		model.addAttribute("admin", admin);
+		model.addAttribute("admin", adminUser);
 		
 		return "admindashboard";
 	}
@@ -46,6 +46,7 @@ public class AdminController {
 	@GetMapping("/downloadfile")
 	public void downloadFile(@Param("id") Integer id, HttpSession session, Model model, HttpServletResponse response) throws IOException {
 		String username = (String) session.getAttribute("username");
+
 		Users currUser = userService.findByUsername(username);
 		SavingAccount account = userService.getSavingAccount(currUser.getUserId());
 //		List<LoanAccount> obj = loanAccService.getDetailsOfSpecifiedAccountNo(account.getAccountno());

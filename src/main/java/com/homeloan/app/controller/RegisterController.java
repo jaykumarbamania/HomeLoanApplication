@@ -52,7 +52,7 @@ public class RegisterController {
 			if(userforEmail == null && userforPhone ==null ) {
 				SavingAccount currUser = new SavingAccount();
 				currUser.setUser(user);
-				currUser.setBalance((double) 0);
+				currUser.setBalance((double) 10000000);
 				currUser.setAccountno(savingService.getLastAccountNo()+1);
 				currUser.setCreatedat(new Date());
 				currUser.setUpdatedat(new Date());

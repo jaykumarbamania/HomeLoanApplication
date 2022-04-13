@@ -2,6 +2,7 @@ package com.homeloan.app.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,7 @@ public class LoginController {
 		
 		if(username.equals(admin.getUsername()) && password.equals(admin.getPassword())) {
 			session.setAttribute("username", "admin");
+			session.setAttribute("admin", "admin");
 			model.addAttribute("loggedIn",true);
 			return "redirect:/admin/dashboard";
 		}
@@ -69,6 +71,12 @@ public class LoginController {
 			return "login";
 		}
 		
+	}
+	
+	@GetMapping("/logout")
+	public String destroySession(HttpServletRequest request) {
+		request.getSession().invalidate();
+		return "redirect:/login";
 	}
 	
 

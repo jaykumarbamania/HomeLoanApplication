@@ -1,8 +1,10 @@
-* {
-  margin: 0;
+*{
   padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
   box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
+
 }
 
 body {
@@ -38,8 +40,7 @@ label.logo{
   padding: 0 100px;
   font-weight: bold;
 }
-
-.reg-form {
+.login-form {
   background: #fff;
   width: 500px;
   margin: 65px auto;
@@ -51,18 +52,18 @@ label.logo{
   border-radius: 4px;
   box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
 }
-.reg-form h1 {
+.login-form h1 {
   padding: 35px 35px 0 35px;
   font-weight: 300;
 }
-.reg-form .content {
+.login-form .content {
   padding: 35px;
   text-align: center;
 }
-.reg-form .input-field {
+.login-form .input-field {
   padding: 12px 5px;
 }
-.reg-form .input-field input {
+.login-form .input-field input {
   font-size: 16px;
   display: block;
   font-family: 'Rubik', sans-serif;
@@ -74,25 +75,25 @@ label.logo{
   -webkit-transition: all .2s;
   transition: all .2s;
 }
-.reg-form .input-field input::-webkit-input-placeholder {
+.login-form .input-field input::-webkit-input-placeholder {
   text-transform: uppercase;
 }
-.reg-form .input-field input::-moz-placeholder {
+.login-form .input-field input::-moz-placeholder {
   text-transform: uppercase;
 }
-.reg-form .input-field input:-ms-input-placeholder {
+.login-form .input-field input:-ms-input-placeholder {
   text-transform: uppercase;
 }
-.reg-form .input-field input::-ms-input-placeholder {
+.login-form .input-field input::-ms-input-placeholder {
   text-transform: uppercase;
 }
-.reg-form .input-field input::placeholder {
+.login-form .input-field input::placeholder {
   text-transform: uppercase;
 }
-.reg-form .input-field input:focus {
+.login-form .input-field input:focus {
   border-color: #222;
 }
-.reg-form a.link {
+.login-form a.link {
   text-decoration: none;
   color: #747474;
   letter-spacing: 0.2px;
@@ -100,14 +101,14 @@ label.logo{
   display: inline-block;
   margin-top: 20px;
 }
-.reg-form .action {
+.login-form .action {
   display: -webkit-box;
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
           flex-direction: row;
 }
-.reg-form .action button {
+.login-form .action button {
   width: 100%;
   border: none;
   padding: 18px;
@@ -123,16 +124,15 @@ label.logo{
   -webkit-transition: all .3s;
   transition: all .3s;
 }
-.reg-form .action button:hover {
+.login-form .action button:hover {
   background: #d8d8d8;
 }
-.reg-form .action button:nth-child(1) {
+.login-form .action button:nth-child(1) {
   background: #2d3b55;
   color: #fff;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 4px;
 }
-.reg-form .action button:nth-child(1):hover {
+.login-form .action button:nth-child(1):hover {
   background: #3c4d6d;
-  color: #fff;
 }

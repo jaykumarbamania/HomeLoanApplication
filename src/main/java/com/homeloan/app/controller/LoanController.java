@@ -64,6 +64,9 @@ public class LoanController {
 			MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public String applyForLoan(LoanAccount loanAcc, HttpSession session, @RequestParam("docUrl") MultipartFile file) {
 		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		Users currUser = userService.findByUsername(username);
 		SavingAccount userAccount = savingAccountService.findAccountByUserId(currUser.getUserId());
 		loanAcc.setAccountNo(userAccount.getAccountno());
@@ -83,13 +86,23 @@ public class LoanController {
 
 		return "redirect:/";
 	}
-
+	
+	//user will accept loan
 	@RequestMapping(value = "/acceptLoan", method = RequestMethod.GET)
-	public String acceptLoan(@Param("id") Integer id, HttpSession session, Model model) {
+	public String acceptLoan(@Param("id") Integer id, HttpSession session, Model model) throws UnsupportedEncodingException, MessagingException {
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		updateLoanAcc.setStatus("Ongoing");
 		updateLoanAcc.setLoanAccId(id);
 		loanAccService.saveAppliedLoan(updateLoanAcc);
+		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
+		double newBal = savingAcc.getBalance() + updateLoanAcc.getAmount();
+		savingAcc.setSequenceId(savingAcc.getSequenceId());
+		savingAcc.setBalance(newBal);
+		savingAccountService.saveAccount(savingAcc);
 		model.addAttribute("accepted", "true");
 //		if( session.getAttribute("accepted") == "true" ) {
 //			System.out.println(model.getAttribute("accepted"));
@@ -98,18 +111,22 @@ public class LoanController {
 //			model.addAttribute("principal",repayment.getPrinciple());
 			model.addAttribute("repayment",repayment);
 			model.addAttribute("viewColumn" , "true");
-			
+			emailService.sendEmail(savingAcc.getUser().getEmail(), "You have accepted loan", "Loan Accepted", "homeloan@bankapp.com");
 //		}
 
 		return "redirect:/";
 	}
-
+	
+	//admin will approve loan
 	@RequestMapping(value = "/approveLoan", method = RequestMethod.GET)
 	public String approveLoan(
 //			@RequestParam("approvedAmt") Double approvedAmt , 
 			@RequestParam("id") String str_id, HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
-
+		String admin = (String) session.getAttribute("admin");
+		if(admin == null || admin.equals("")) {
+			return "redirect:/login";
+		}
 		Integer id = Integer.parseInt(str_id);
 		Repayment repayment = new Repayment();
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
@@ -135,14 +152,17 @@ public class LoanController {
 		repaymentService.saveRepayment(repayment);
 		emailService.sendEmail(savingAcc.getUser().getEmail(), "COngratulations , Your Loan is Approved","Loan is Approved","loanhome349@gmail.com");
 
-//		model.addAttribute("loanApproved",true);
 		return "redirect:/admin/dashboard";
 	}
-
+	
+//	user can reject loan
 	@RequestMapping(value = "/rejectLoan", method = RequestMethod.GET)
 	public String rejectLoan(@RequestParam("id") String str_id, HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
-
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		Integer id = Integer.parseInt(str_id);
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
 		updateLoanAcc.setLoanAccId(id);
@@ -153,13 +173,16 @@ public class LoanController {
 		return "redirect:/admin/dashboard";
 	}
 	
+	//only user can view loan details
 	@RequestMapping(value = "/viewLoan", method = RequestMethod.GET)
 	public String viewLoan(@RequestParam("id") String str_id, HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
-
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		Integer id = Integer.parseInt(str_id);
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(id).get(0);
-		String username = (String) session.getAttribute("username");
 		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
 		model.addAttribute("loan_id",id);
 		model.addAttribute("repayment",repayment);
@@ -170,10 +193,13 @@ public class LoanController {
 	@RequestMapping(value = "/prepayment", method = RequestMethod.GET)
 	public String prePayment(@RequestParam("loan_id") String str_loanid, HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
-
+		
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		Integer loan_id = Integer.parseInt(str_loanid);
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
-		String username = (String) session.getAttribute("username");
 		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
 		
 		model.addAttribute("repayment",repayment);
@@ -186,13 +212,14 @@ public class LoanController {
 	public String checkPrePayment(@RequestParam("preEmi") Double preEmi, 
 			@RequestParam("loan_id") String str_loanid, 
 			@RequestParam("emi1") Double emi,
-			HttpSession session, Model model) {
+			HttpSession session, Model model) throws UnsupportedEncodingException, MessagingException {
 
-		
-		
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		Integer loan_id = Integer.parseInt(str_loanid);
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
-		String username = (String) session.getAttribute("username");
 		Repayment repayment = repaymentService.getRepaymentByAccountNo(updateLoanAcc.getAccountNo());
 		
 
@@ -204,10 +231,16 @@ public class LoanController {
 			System.out.println(newOutStanding);
 			repayment.setRepaymentid(repayment.getRepaymentid());
 			repayment.setOutstanding(newOutStanding);
-			
+			SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
+			double newBal = savingAcc.getBalance() - preEmi;
+			savingAcc.setSequenceId(savingAcc.getSequenceId());
+			savingAcc.setBalance(newBal);
+			savingAccountService.saveAccount(savingAcc);
 			repaymentService.saveRepayment(repayment);
 			model.addAttribute("successMsg","Pre-Payment is Successfull ");
 			model.addAttribute("repayment",repayment);
+			
+			emailService.sendEmail(savingAcc.getUser().getEmail(), "Congratualaion... Yur prepaymnet was successful ","Your Prepayment is successful","homeloan@bankapp.com");
 			
 			return "prepayment";
 		}else {
@@ -224,10 +257,12 @@ public class LoanController {
 			@PathVariable("pie") Double pie,
 			HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
-
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 	
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
-		String username = (String) session.getAttribute("username");
 		Repayment repayment = repaymentService.getRepaymentById(repaymentId);
 		double currNoOfEmiPaid = repayment.getNoEmiPaid();
 		double newOut = repayment.getOutstanding()-ppe;
@@ -237,7 +272,11 @@ public class LoanController {
 		repayment.setInterest(newInterst);
 		repayment.setNoEmiPaid(currNoOfEmiPaid+1);
 		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
-		emailService.sendEmail(savingAcc.getUser().getEmail(), "EMI DEDUCTED  ","EMI DEDUCTED","loanhome349@gmail.com");
+		double newBal = savingAcc.getBalance() - ppe - pie;
+		savingAcc.setSequenceId(savingAcc.getSequenceId());
+		savingAcc.setBalance(newBal);
+		savingAccountService.saveAccount(savingAcc);
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "EMI DEDUCTED  ","EMI DEDUCTED","homeloan@bankapp.com");
 		repaymentService.saveRepayment(repayment);
 		model.addAttribute("loan_id",updateLoanAcc.getLoanAccId());
 		model.addAttribute("repayment",repayment);
@@ -251,17 +290,11 @@ public class LoanController {
 			@PathVariable("outstanding") Double outstanding,
 			HttpSession session, Model model)
 			throws UnsupportedEncodingException, MessagingException {
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 
-	
-//		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
-//		String username = (String) session.getAttribute("username");
-//		Repayment repayment = repaymentService.getRepaymentById(repaymentId);
-//		double currNoOfEmiPaid = repayment.getNoEmiPaid();
-//		repayment.setRepaymentid(repaymentId);
-//		repayment.setOutstanding(newOut);
-//		repayment.setInterest(newInterst);
-//		repayment.setNoEmiPaid(currNoOfEmiPaid+1);
-//		repaymentService.saveRepayment(repayment);
 		model.addAttribute("loan_id",loan_id);
 		model.addAttribute("outstanding",outstanding);
 		model.addAttribute("repaymentId",repaymentId);
@@ -272,21 +305,31 @@ public class LoanController {
 	public String closeForeClosing(@RequestParam("repaymentid") Integer repaymentid,
 			@RequestParam("loan_id") Integer loan_id,
 			@RequestParam("outstanding") Double outstanding,
-			HttpSession session, Model model){
+			HttpSession session, Model model) throws UnsupportedEncodingException, MessagingException{
 
-	
+		String username = (String) session.getAttribute("username");
+		if(username == null || username.equals("")) {
+			return "redirect:/login";
+		}
 		LoanAccount updateLoanAcc = loanAccService.getLoanDetails(loan_id).get(0);
 		updateLoanAcc.setLoanAccId(loan_id);
 		updateLoanAcc.setStatus("Closed");
 		loanAccService.saveAppliedLoan(updateLoanAcc);
 //		String username = (String) session.getAttribute("username");
+		SavingAccount savingAcc = loanAccService.getSavingAccByLoanIdAndAccNo(updateLoanAcc.getAccountNo());
 		Repayment repayment = repaymentService.getRepaymentById(repaymentid);
+		double newBal = savingAcc.getBalance() - outstanding;
+		savingAcc.setSequenceId(savingAcc.getSequenceId());
+		savingAcc.setBalance(newBal);
+		savingAccountService.saveAccount(savingAcc);
 		repayment.setOutstanding((double) 0);
 		repayment.setStatus("Closed");
 		repaymentService.saveRepayment(repayment);
 		model.addAttribute("loan_id",loan_id);
 		model.addAttribute("outstanding",outstanding);
 		model.addAttribute("repaymentId",repaymentid);
+		
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "Your Loan is Closed", "Your loan is Closed!!!", "homeloan@bankapp.com");
 		return "redirect:/";
 	}
 
