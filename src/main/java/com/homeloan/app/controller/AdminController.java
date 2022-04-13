@@ -2,7 +2,6 @@ package com.homeloan.app.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.homeloan.app.model.LoanAccount;
-import com.homeloan.app.model.SavingAccount;
 import com.homeloan.app.model.Users;
 import com.homeloan.app.service.LoanAccountService;
 import com.homeloan.app.service.UserService;
@@ -45,11 +43,7 @@ public class AdminController {
 
 	@GetMapping("/downloadfile")
 	public void downloadFile(@Param("id") Integer id, HttpSession session, Model model, HttpServletResponse response) throws IOException {
-		String username = (String) session.getAttribute("username");
 
-		Users currUser = userService.findByUsername(username);
-		SavingAccount account = userService.getSavingAccount(currUser.getUserId());
-//		List<LoanAccount> obj = loanAccService.getDetailsOfSpecifiedAccountNo(account.getAccountno());
 		LoanAccount obj = loanAccService.getLoanDetails(id).get(0);
 		if (obj != null) {
 			LoanAccount loanObj = obj;

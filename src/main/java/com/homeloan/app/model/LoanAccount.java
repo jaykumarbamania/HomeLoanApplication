@@ -1,7 +1,6 @@
 package com.homeloan.app.model;
 
-import java.util.Date;
-import java.util.Map;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import lombok.Data;
 

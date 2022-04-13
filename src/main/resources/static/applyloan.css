@@ -1,3 +1,181 @@
+*{
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+
+}
+body{
+  font-family: 'Rubik', sans-serif;
+
+}
+nav
+{
+    background: #0082e6;
+    height: 80px;
+    width: 100%;
+}
+nav ul
+{
+    float: right;
+    margin-right: 20px;
+
+}
+nav ul li{
+    display: inline-block;
+    line-height: 80px;
+    margin: 0 5px;
+}
+nav ul li a{
+    color: white;
+    font-size: 17px;
+    text-transform: uppercase;
+}
+label.logo{
+    color: white;
+    font-size: 35px;
+    line-height: 80px;
+    padding: 0 100px;
+    font-weight: bold;
+}
+/* {
+  box-sizing: border-box;
+} */
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 25%;
+  padding: 0 10px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
+/* Style the counter cards */
+.card1 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  text-align: center;
+  background-color: #f1f1f1;
+	
+
+}
+.card2 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  text-align: center;
+  background-color: #f1f1f1;
+	margin-top: 50px;
+
+
+}
+.card3 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+	max-width: 400px;
+  text-align: center;
+  background-color: #f1f1f1;
+margin-top: 50px;
+	
+}
+.row{
+	padding-top: 80px;
+	padding-left: 150px;
+}
+
+.contactForm{
+    width: 40%;
+    padding: 40px;
+    background-color: #f1f1f1;
+	margin-bottom: 150px;
+}
+
+.contactForm h2{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.contactForm .inputBox{
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+	
+}
+
+.contactForm .inputBox input{
+    width: 100%;
+    padding: 5px 0;
+    font-size: 16px;
+    margin: 10px 0;
+    border: none;
+    border-bottom: 2px solid #333;
+    outline: none;
+}
+
+.contactForm .inputBox span{
+    position: absolute;
+    left: 0;
+    padding: 5px 0;
+    font-size: 16px;
+    margin: 10px 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.contactForm .inputBox input:focus ~ span,
+.contactForm .inputBox input:valid ~ span{
+    
+    font-size: 02px;
+    transform: translate(-20px);
+
+}
+
+.contactForm .inputBox input[type="submit"]{
+    width: 100px;
+    background: #0082e6;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+}
+.contactForm{
+	margin-top: 80px;
+	margin-right: 200px;
+}
+.div1{
+	border: 1px solid black;
+  margin: 1rem;
+  padding: 2rem 2rem;
+	text-align: center;}
+.contactForm {
+	display: inline-block;
+ 
+  padding: 1rem 1rem;
+  vertical-align: middle;
+}
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +184,7 @@
 }
 
 body {
-  background: #e35869;
+  
   font-family: 'Rubik', sans-serif;
 }
 

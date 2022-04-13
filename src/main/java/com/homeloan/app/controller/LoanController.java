@@ -2,11 +2,8 @@ package com.homeloan.app.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.homeloan.app.model.LoanAccount;
 import com.homeloan.app.model.Repayment;
@@ -32,7 +27,6 @@ import com.homeloan.app.service.EmailService;
 import com.homeloan.app.service.LoanAccountService;
 import com.homeloan.app.service.RepaymentService;
 import com.homeloan.app.service.SavingAccountService;
-import com.homeloan.app.service.StorageService;
 import com.homeloan.app.service.UserService;
 
 @Controller
@@ -150,7 +144,7 @@ public class LoanController {
 		repayment.setStatus("Ongoing");
 		repayment.setOutstanding(updateLoanAcc.getApprovedAmt());
 		repaymentService.saveRepayment(repayment);
-		emailService.sendEmail(savingAcc.getUser().getEmail(), "COngratulations , Your Loan is Approved","Loan is Approved","loanhome349@gmail.com");
+		emailService.sendEmail(savingAcc.getUser().getEmail(), "Congratulations , Your Loan is Approved","Loan is Approved","loanhome349@gmail.com");
 
 		return "redirect:/admin/dashboard";
 	}
