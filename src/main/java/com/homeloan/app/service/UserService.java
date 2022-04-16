@@ -1,5 +1,7 @@
 package com.homeloan.app.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,10 @@ public class UserService {
 	
 	@Autowired
 	private SavingAccountRepository savingAccRepo;
+	
+	public List<Users> getAllUsers(){
+		return repo.findAll();
+	}
 
 
 	public Users checkUser(String name,String password) {

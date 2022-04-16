@@ -10,11 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "loan_account")
+@AllArgsConstructor
 public class LoanAccount {
 	
 	@Id

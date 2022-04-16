@@ -1,6 +1,8 @@
 package com.homeloan.app.controller;
 
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -34,6 +36,8 @@ public class LoginController {
 		return new ModelAndView(viewName, modelName, users);
 		
 	}
+	
+
 	
 	@PostMapping("/checkLogin")
 	public String checkUser(@RequestParam("username") String username,
